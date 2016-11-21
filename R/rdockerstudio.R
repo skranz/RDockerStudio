@@ -3,12 +3,19 @@ examples.RDockerStudioApp = function() {
   viewApp(app,launch.browser = rstudioapi::viewer)
 }
 
+#' View RDockerStudio in the RStudio pane
+#'
+#' Makes sense when being logged-in to an RStudio server instance
+#' that is running on a webserver that has docker containers.
+#' Your user must be able to run docker commands
+#' @export
 viewRDockerStudio = function() {
   app =RDockerStudioApp()
   viewApp(app,launch.browser = rstudioapi::viewer)
 }
 
-
+#' Create an RDockerStudio shinyEvents app
+#' @export
 RDockerStudioApp  = function() {
   app = eventsApp()
 
