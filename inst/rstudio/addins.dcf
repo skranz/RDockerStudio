@@ -1,0 +1,4 @@
+Name: Docker Monitor
+Description: A simple monitoring app for docker containers
+Binding: viewRDockerStudio
+Interactive: true
