@@ -1,5 +1,5 @@
 examples.RDockerStudioApp = function() {
-  app =RDockerStudioApp()
+  app  =RDockerStudioApp()
   viewApp(app,launch.browser = rstudioapi::viewer)
 }
 
@@ -36,6 +36,10 @@ RDockerStudioApp  = function() {
         actionButton("imgRefreshBtn","Refresh"),
         actionButton("imgRemoveBtn","Remove"),
         uiOutput("imgMsgUI")
+      ),
+      tabPanel(title="Ressources",
+        br(),
+        uiOutput("resUI")
       )
     )
   )
@@ -44,6 +48,11 @@ RDockerStudioApp  = function() {
     restore.point("appInit")
     refresh.container.table(app=app)
     refresh.image.table(app=app)
+    if (!is.null(app$res.obs)) app$res.obs$destroy()
+    app$res.obs=observe({
+      refresh.res(app=app)
+      invalidateLater(3000)
+    })
   })
 
 
@@ -226,4 +235,27 @@ get.docker.images = function() {
   txt
   idf = read.table(textConnection(txt),sep = ";",col.names = c("id","repository","tag","size","created"), stringsAsFactors = FALSE)
   idf
+}
+
+refresh.res = function(app=app) {
+  restore.point("refresh.res")
+  #txt = docker.stats()
+  #html = paste0("<pre>", paste0(txt, collapse="\n"),"</pre>")
+  dat = docker.stats()
+  html = html.table(dat)
+  dsetUI("resUI", HTML(html))
+  setUI("resUI", HTML(html))
+
+}
+
+docker.stats = function() {
+  library(stringtools)
+
+  txt = system("docker stats --no-stream", intern=TRUE)
+  txt
+  w = c(20,20,23,20,22,20,4)
+  dat = read.fwf(textConnection(txt[-1]),widths = w,stringsAsFactors=FALSE)
+  dat = as.data.frame(lapply(dat, str.trim))
+  colnames(dat) = c("CONTAINER","CPU %","MEM USAGE / LIMIT","MEM %","NET I/O","BLOCK I/O","PIDS")
+  dat
 }
