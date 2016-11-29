@@ -136,6 +136,31 @@ refresh.container.table = function(app=getApp()) {
 
 }
 
+pause.docker.container = function(name) {
+  restore.point("pause.docker.container")
+  cmd = paste0('docker pause ',name)
+  txt = try(system(cmd, intern=TRUE))
+  if (is(txt,"try-error")) {
+    txt = as.character(txt)
+  } else {
+    txt = paste0("paused ", txt)
+  }
+  txt
+}
+
+
+unpause.docker.container = function(name) {
+  restore.point("unpause.docker.container")
+  cmd = paste0('docker unpause ',name)
+  txt = try(system(cmd, intern=TRUE))
+  if (is(txt,"try-error")) {
+    txt = as.character(txt)
+  } else {
+    txt = paste0("unpaused ", txt)
+  }
+  txt
+}
+
 start.docker.container = function(name) {
   restore.point("start.docker.container")
   cmd = paste0('docker start ',name)
@@ -251,7 +276,11 @@ refresh.res = function(app=app) {
   #txt = docker.stats()
   #html = paste0("<pre>", paste0(txt, collapse="\n"),"</pre>")
   dat = docker.stats()
-  html = html.table(dat)
+  if (is.null(dat)) {
+    html="No running containers."
+  } else {
+    html = html.table(dat)
+  }
   dsetUI("resUI", HTML(html))
   setUI("resUI", HTML(html))
 
@@ -262,6 +291,8 @@ docker.stats = function() {
 
   txt = system("docker stats --no-stream", intern=TRUE)
   txt
+  if (NROW(txt)<2) return(NULL)
+
   w = c(20,20,23,20,22,20,4)
   dat = read.fwf(textConnection(txt[-1]),widths = w,stringsAsFactors=FALSE)
   dat = as.data.frame(lapply(dat, str.trim))
