@@ -1,5 +1,5 @@
 examples.RDockerStudioApp = function() {
-  app  =RDockerStudioApp()
+  app  = RDockerStudioApp()
   viewApp(app,launch.browser = rstudioapi::viewer)
 }
 
@@ -10,6 +10,7 @@ examples.RDockerStudioApp = function() {
 #' Your user must be able to run docker commands
 #' @export
 viewRDockerStudio = function() {
+  library(RDockerStudio)
   app =RDockerStudioApp()
   viewApp(app,launch.browser = rstudioapi::viewer)
 }
@@ -25,6 +26,8 @@ RDockerStudioApp  = function() {
         br(),
         uiOutput("contTableUI"),
         actionButton("contRefreshBtn","Refresh"),
+        actionButton("contPauseBtn","Pause"),
+        actionButton("contUnpauseBtn","Unpause"),
         actionButton("contStartBtn","Start"),
         actionButton("contStopBtn","Stop"),
         actionButton("contRemoveBtn","Remove"),
@@ -70,6 +73,12 @@ RDockerStudioApp  = function() {
   }
 
 
+  buttonHandler("contPauseBtn", function(app=getApp(),...) {
+    container.command(pause.docker.container)
+  })
+  buttonHandler("contUnpauseBtn", function(app=getApp(),...) {
+    container.command(unpause.docker.container)
+  })
 
   buttonHandler("contStartBtn", function(app=getApp(),...) {
     container.command(start.docker.container)
