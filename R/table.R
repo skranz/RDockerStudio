@@ -102,7 +102,7 @@ tdClickHandler = function(id=NULL, fun, ..., eventId=if(stop.propagation) "tdCli
     ')
   }
 
-  shiny.value.code = paste0('{eventId: "',eventId,'", id: table.attr("id"), tdClass: td.attr("class"), data: td.data(), tdId: td.attr("id"),  tableId: table.attr("id"), tableClass: table.attr("class")}')
+  shiny.value.code = paste0('{eventId: "',eventId,'", id: table.attr("id"), tdClass: td.attr("class"), data: td.data(), tdId: td.attr("id"),  tableId: table.attr("id"), tableClass: table.attr("class"), nonce: Math.random()}')
 
   customEventHandler(eventId = eventId,css.locator = css.selector,event = "click",id = id,inner.js.code = inner.js, shiny.value.code = shiny.value.code, fun=fun,...)
 }
